@@ -1,0 +1,56 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.env/
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+
+# SQLite database files
+*.sqlite3
+*.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables and secrets
+.env
+.env.*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Pytest
+.cache/
+.pytest_cache/
+
+# Mypy
+.mypy_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Build and distribution
+build/
+dist/
+*.egg
+.eggs/
+MANIFEST
+
+# Logs
+*.log
+
+# FastAPI auto-generated OpenAPI docs (optional, if persisted)
+openapi.json
