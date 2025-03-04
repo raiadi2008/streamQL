@@ -1,11 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 
 
-class File(BaseModel):
+class FileStore(BaseModel):
     """
-    manages the workspace in which file is being used
+    File Store Schema
     """
 
-    workspace_file_id: UUID
-    workspace_file_path: str
+    id: UUID
+    file_path: str
+    file_name: str
+    projects: list = Field(default_factory=list)

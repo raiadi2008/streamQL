@@ -2,7 +2,6 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String
 from uuid import UUID
 from typing import List
-from datetime import datetime
 
 
 class Base(DeclarativeBase):
@@ -10,6 +9,10 @@ class Base(DeclarativeBase):
 
 
 class ProjectFileLink(Base):
+    """
+    Sqlalchemy ORM model to store relation between Project and File
+    """
+
     __tablename__ = "project_file_link"
 
     project_id: Mapped[UUID] = mapped_column(
@@ -17,12 +20,12 @@ class ProjectFileLink(Base):
     )
     file_id: Mapped[UUID] = mapped_column(ForeignKey("file_store.id"), primary_key=True)
 
-    # Future fields — optional for now
-    added_on: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    role: Mapped[str] = mapped_column(nullable=True)  # e.g., "main", "auxiliary"
-
 
 class FileStore(Base):
+    """
+    Sqlalchemy ORM model for user files
+    """
+
     __tablename__ = "file_store"
 
     file_path: Mapped[str] = mapped_column(nullable=False, unique=True)
@@ -34,6 +37,10 @@ class FileStore(Base):
 
 
 class ProjectStore(Base):
+    """
+    Sqlalchemy ORM model for project
+    """
+
     __tablename__ = "project_store"
 
     project_name: Mapped[str] = mapped_column(unique=True, nullable=False)
