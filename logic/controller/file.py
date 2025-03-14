@@ -6,9 +6,6 @@ from logic.workspace_management.file_manager import file_manager
 
 
 class FileController:
-    def __init__(self):
-        pass
-
     @staticmethod
     def validate_csv_file(source_file_path: str, sample_lines=10) -> bool:
         """
@@ -24,7 +21,7 @@ class FileController:
         except Exception:
             return False
 
-    def add_file(self, source_file_path: str, project_id: UUID):
+    def add_file(source_file_path: str, project_id: UUID):
         """
         Adds a file to stream ql project
         Add the csv file to the database of project
@@ -32,8 +29,7 @@ class FileController:
             source_file_path: Path of the file to be copied
             project_id: Id of the project in which file is to be added
         """
-        if not self.validate_csv_file(source_file_path=source_file_path):
+        if not FileController.validate_csv_file(source_file_path=source_file_path):
             return "File is not CSV"
         file_uniqe_id = uuid()
         file_manager.copy_file(source_file_path=source_file_path)
-        
