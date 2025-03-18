@@ -4,7 +4,7 @@ from logic.db.ops.project_store import ProjectStoreDB
 from logic.db.ops.file_store import FileStoreDB
 from logic.db.ops.project_file_link import ProjectFileLinkDB
 from logic.models.db_models import ProjectStore
-from engine.db import EngineDB  # Assuming this is the module with EngineDB
+from engine.db import EngineDB
 from logic.workspace_management.workspace import workspace
 from logic.constants import WorkspaceFolders
 import pandas as pd
