@@ -1,24 +1,41 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel
+from uuid import UUID
+from logic.controller.file import FileController
+from logic.schema.file import FileUpdateRequest, FileUploadRequest, FileDeleteRequest
+
 
 router = APIRouter(tags=["Files"])
 
 
 @router.post("/upload")
-async def upload_file(file_path: str, project_id: str):
-    """
-    Adds a file to the project
-    Args:
-        file_path: Path of the source file to be uploaded
-        project_id: Id of the project in which the file should be uploaded
-    """
-    pass
+async def upload_file(request: FileUpdateRequest):
+    try:
+        FileController.add_files(request.file_paths, request.project_id)
+        return {"status": "success", "message": "Files uploaded and added to project"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/{file_id}")
-async def delete_file(file_path: str):
-    """
-    Deletes a file if its not being used in any project
-    Args:
-        file_id: Id of the file to be deleted
-    """
-    pass
+@router.delete("/")
+async def delete_files(request: FileDeleteRequest):
+    try:
+        FileController.delete_files(request.file_ids)
+        return {"status": "success", "message": "Files deleted"}
+    except Warning as w:
+        raise HTTPException(status_code=400, detail=str(w))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/update")
+async def update_file(request: FileUpdateRequest):
+    try:
+        FileController.update_files(request.file_path, request.file_id)
+        return {"status": "success", "message": "File updated in all linked projects"}
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except IOError as ioe:
+        raise HTTPException(status_code=500, detail=str(ioe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
