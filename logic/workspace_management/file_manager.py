@@ -3,27 +3,27 @@ import os
 from pathlib import Path
 
 from logic.workspace_management.workspace import workspace
-from logic.constants import WorkspaceFolders, FileCopyResults
+from logic.constants import WorkspaceFolders, FileTransferResults
 
 
 class FileManager:
     @staticmethod
-    def copy_file(source_file_path: str, project_id) -> FileCopyResults:
+    def copy_file(source_file_path: str, project_id) -> FileTransferResults:
         """
         Copy a file to the StreamQL workspace.
         Args:
             source_file_path: Path of the file to be copied into the workspace.
         Returns:
-            FileCopyResults indicating success or failure.
+            FileTransferResults indicating success or failure.
         """
         try:
             destination_dir = workspace.get_path(WorkspaceFolders.USER_FILES)
             Path(destination_dir).mkdir(parents=True, exist_ok=True)
             shutil.copy(source_file_path, destination_dir)
-            return FileCopyResults.SUCCESS
+            return FileTransferResults.SUCCESS
         except Exception as e:
             print(f"Error copying file: {e}")
-            return FileCopyResults.FAILED
+            return FileTransferResults.FAILED
 
     @staticmethod
     def delete_file(file_id: str) -> bool:
@@ -49,7 +49,7 @@ class FileManager:
             return False
 
     @staticmethod
-    def update_file(file_id: str, new_file_path: str) -> FileCopyResults:
+    def update_file(file_id: str, new_file_path: str) -> FileTransferResults:
         """
         Replace an existing file in the workspace with a new one.
 
@@ -58,7 +58,7 @@ class FileManager:
             new_file_path: Path to the new file that will overwrite the existing one.
 
         Returns:
-            FileCopyResults indicating success or failure.
+            FileTransferResults indicating success or failure.
         """
         try:
             df = pd.read_csv(file_path, nrows=5)

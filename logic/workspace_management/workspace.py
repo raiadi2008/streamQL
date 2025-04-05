@@ -1,10 +1,9 @@
-import os
 from pathlib import Path
-from constants import WorkspaceFolders
+from logic.constants import WorkspaceFolders
 
 
 class Workspace:
-    def __init__(self, username=os.getlogin()):
+    def __init__(self, username=Path.home().name):
         self.workspace_path = Path(f"/Users/{username}/streamql")
         self.paths = {}
 

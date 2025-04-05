@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from logic.workspace_management.workspace import workspace
-from engine.db import db
+from engine.db import EngineDB
 from logic.constants import STREAMQL_STORE, WorkspaceFolders
 from logic.routers.file import router as file_router
 from logic.routers.project import router as project_router
@@ -11,7 +11,7 @@ from logic.routers.project import router as project_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     workspace.create_workspace()
-    db.create_db(STREAMQL_STORE, workspace.get_path(WorkspaceFolders.STORES))
+    EngineDB.create_db(STREAMQL_STORE, workspace.get_path(WorkspaceFolders.STORES))
     yield
 
 
