@@ -1,6 +1,6 @@
 from logic.models.db_models import ProjectStore
 from sqlalchemy.orm import Session
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 
 class ProjectStoreDB:
@@ -41,7 +41,7 @@ class ProjectStoreDB:
         return project
 
     @staticmethod
-    def get_project(session: Session, project_id):
+    def get_project(project_id: UUID, session: Session):
         return session.query(ProjectStore).filter_by(id=project_id).first()
 
     @staticmethod

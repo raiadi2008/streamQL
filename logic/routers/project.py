@@ -37,6 +37,11 @@ async def create_project(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/{project_id}")
+async def get_project(project_id: UUID, db_session: Session = Depends(sqldb.get_db)):
+    return ProjectController.get(project_id, db_session)
+
+
 @router.delete("/{project_id}")
 async def delete_project(project_id: UUID, db_session: Session = Depends(sqldb.get_db)):
     try:

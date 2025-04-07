@@ -175,4 +175,4 @@ class ProjectController:
         Returns:
             A single ProjectStore instance or None
         """
-        return ProjectStoreDB.get_project(db, project_id)
+        return ProjectStoreDB.get_project(project_id, db)
