@@ -1,4 +1,7 @@
 from uuid import UUID, uuid4
+import pandas as pd
+from sqlalchemy.orm import Session
+
 from logic.schema.file import FileStore as FileStoreSchema
 from logic.db.ops.project_store import ProjectStoreDB
 from logic.db.ops.file_store import FileStoreDB
@@ -7,7 +10,6 @@ from logic.models.db_models import ProjectStore
 from engine.db import EngineDB
 from logic.workspace_management.workspace import workspace
 from logic.constants import WorkspaceFolders
-import pandas as pd
 
 
 class ProjectController:
@@ -32,10 +34,14 @@ class ProjectController:
         conn.close()
 
     @staticmethod
-    def create(project_name: str, description: str = None):
+    def create(
+        project_name: str,
+        db: Session,
+        description: str = None,
+    ):
         db_uuid = uuid4()
         project = ProjectStoreDB.create_project(
-            session=workspace.get_db_session(),
+            db,
             project_name=project_name,
             project_db_name=db_uuid,
             project_description=description,
@@ -46,30 +52,34 @@ class ProjectController:
         return project
 
     @staticmethod
-    def add_files(files: list[FileStoreSchema], project_id: UUID):
-        session = workspace.get_db_session()
-        project = ProjectStoreDB.get_project(session, project_id)
+    def add_files(files: list[FileStoreSchema], project_id: UUID, db_session: Session):
+        project = ProjectStoreDB.get_project(db_session, project_id)
         db_file = f"{project.project_db_name}.db"
         db_path = str(workspace.get_path(WorkspaceFolders.USER_FILES))
 
         for file in files:
             df = pd.read_csv(file.file_path)
             ProjectController.create_table(project.project_db_name, file.file_name, df)
-            ProjectFileLinkDB.link_file_to_project(session, project_id, file.id)
+            ProjectFileLinkDB.link_file_to_project(db_session, project_id, file.id)
 
     @staticmethod
-    def remove_files(files: list[FileStoreSchema], project_id: UUID):
-        session = workspace.get_db_session()
-        project = ProjectStoreDB.get_project(session, project_id)
+    def remove_files(
+        files: list[FileStoreSchema], project_id: UUID, db_session: Session
+    ):
+        project = ProjectStoreDB.get_project(db_session, project_id)
 
         for file in files:
             ProjectController.delete_table(file.file_name, project.project_db_name)
-            ProjectFileLinkDB.unlink_file_from_project(session, project_id, file.id)
+            ProjectFileLinkDB.unlink_file_from_project(db_session, project_id, file.id)
 
     @staticmethod
-    def update(files: list[FileStoreSchema], project_id: UUID, description: str = None):
-        session = workspace.get_db_session()
-        project = ProjectStoreDB.get_project(session, project_id)
+    def update(
+        files: list[FileStoreSchema],
+        project_id: UUID,
+        db_session: Session,
+        description: str = None,
+    ):
+        project = ProjectStoreDB.get_project(db_session, project_id)
 
         if files:
             for file in files:
@@ -81,16 +91,15 @@ class ProjectController:
 
         if description:
             ProjectStoreDB.update_project(
-                session, project_id, project_description=description
+                db_session, project_id, project_description=description
             )
 
     @staticmethod
-    def delete(project_id: UUID):
-        session = workspace.get_db_session()
-        project = ProjectStoreDB.get_project(session, project_id)
+    def delete(project_id: UUID, db_session):
+        project = ProjectStoreDB.get_project(db_session, project_id)
 
         EngineDB.delete_db(
             f"{project.project_db_name}.db",
             str(workspace.get_path(WorkspaceFolders.USER_FILES)),
         )
-        ProjectStoreDB.delete_project(session, project_id)
+        ProjectStoreDB.delete_project(db_session, project_id)

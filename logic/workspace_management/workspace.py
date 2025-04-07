@@ -11,10 +11,8 @@ class Workspace:
         """
         Creates all the necessary directories to run the application
         """
-        # Create main workspace directory
         self.workspace_path.mkdir(exist_ok=True)
 
-        # Create subdirectories and store their paths
         for folder in WorkspaceFolders:
             folder_path = self.workspace_path / folder.value
             folder_path.mkdir(exist_ok=True)
