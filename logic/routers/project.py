@@ -16,7 +16,7 @@ router = APIRouter(tags=["Projects"])
 @router.get("/")
 async def get_projects(session=Depends(sqldb.get_db)):
     try:
-        projects = ProjectController.get_projects(session)
+        projects = ProjectController.get_all(session)
         return {"projects": [p.__dict__ for p in projects]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
