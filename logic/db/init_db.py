@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from contextlib import contextmanager
+from typing import Generator
+
 from logic.models.db_models import Base
 from logic.workspace_management.workspace import workspace
 from logic.constants import WorkspaceFolders, STREAMQL_STORE
@@ -24,7 +26,10 @@ class SQLiteDB:
         self._session_maker = sessionmaker(bind=self._engine)
 
     @contextmanager
-    def get_db(self):
+    def generate_session(self) -> Generator[Session, None, None]:
+        """
+        Internal context-managed session for non-FastAPI code.
+        """
         if not self._session_maker:
             raise RuntimeError("Database not initialized. Call init() first.")
 
@@ -37,6 +42,13 @@ class SQLiteDB:
             raise
         finally:
             session.close()
+
+    def get_db(self) -> Generator[Session, None, None]:
+        """
+        FastAPI-compatible generator. Use this in `Depends(...)`.
+        """
+        with self.generate_session() as session:
+            yield session
 
 
 sqldb = SQLiteDB()
