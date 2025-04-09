@@ -1,20 +1,17 @@
-from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
-from uuid import UUID
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
+
 from logic.controller.file import FileController
-from logic.schema.file import FileUpdateRequest, FileUploadRequest, FileDeleteRequest
+from logic.schema.file import FileUpdateRequest, FileDeleteRequest, FileUploadRequest
+from logic.db.init_db import sqldb
 
 
 router = APIRouter(tags=["Files"])
 
 
 @router.post("/upload")
-async def upload_file(request: FileUpdateRequest):
-    try:
-        FileController.add_files(request.file_paths, request.project_id)
-        return {"status": "success", "message": "Files uploaded and added to project"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def upload_file(fur: FileUploadRequest, db: Session = Depends(sqldb.get_db)):
+    FileController.add_files(fur.file_paths, fur.project_id, db)
 
 
 @router.delete("/")
