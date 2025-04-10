@@ -13,7 +13,12 @@ class FileStore(BaseModel):
     projects: list = Field(default_factory=list)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+class FilePathUploadRequest(BaseModel):
+    file_path: str
+    file_name: str
 
 
 class FileUploadRequest(BaseModel):
@@ -21,7 +26,7 @@ class FileUploadRequest(BaseModel):
     File upload request json schema
     """
 
-    file_paths: list[str]
+    file_paths: list[FilePathUploadRequest]
     project_id: UUID
 
 

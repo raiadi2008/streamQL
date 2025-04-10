@@ -8,22 +8,26 @@ from logic.constants import WorkspaceFolders, FileTransferResults
 
 class FileManager:
     @staticmethod
-    def copy_file(source_file_path: str, project_id) -> FileTransferResults:
+    def copy_file(source_file_path: str, project_id) -> str | None:
         """
         Copy a file to the StreamQL workspace.
+
         Args:
             source_file_path: Path of the file to be copied into the workspace.
+            project_id: Used for future enhancements or naming separation.
+
         Returns:
-            FileTransferResults indicating success or failure.
+            The path to the copied file (as string) or None if it fails.
         """
         try:
             destination_dir = workspace.get_path(WorkspaceFolders.USER_FILES)
             Path(destination_dir).mkdir(parents=True, exist_ok=True)
-            shutil.copy(source_file_path, destination_dir)
-            return FileTransferResults.COPY_SUCCESS.value
+            destination_path = Path(destination_dir) / Path(source_file_path).name
+            shutil.copy(source_file_path, destination_path)
+            return str(destination_path)
         except Exception as e:
             print(f"Error copying file: {e}")
-            return FileTransferResults.COPY_FAILED.value
+            return None
 
     @staticmethod
     def delete_file(file_id: str) -> bool:

@@ -11,7 +11,7 @@ router = APIRouter(tags=["Files"])
 
 @router.post("/upload")
 async def upload_file(fur: FileUploadRequest, db: Session = Depends(sqldb.get_db)):
-    FileController.add_files(fur.file_paths, fur.project_id, db)
+    FileController.add_files(fur, db)
 
 
 @router.delete("/")

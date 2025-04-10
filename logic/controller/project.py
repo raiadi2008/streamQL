@@ -80,7 +80,7 @@ class ProjectController:
             project_id: Id of the project in which files are being added
             db_session: DB session
         """
-        project = ProjectStoreDB.get_project(db_session, project_id)
+        project = ProjectStoreDB.get_project(project_id, db_session)
         db_file = f"{project.project_db_name}.db"
         db_path = str(workspace.get_path(WorkspaceFolders.USER_FILES))
 

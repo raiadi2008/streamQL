@@ -17,7 +17,7 @@ class ProjectStore(BaseModel):
     files: list = Field(default_factory=list)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CreateProjectRequest(BaseModel):

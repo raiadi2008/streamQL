@@ -11,6 +11,8 @@ from logic.schema.file import FileStore as FileStoreSchema
 from logic.workspace_management.workspace import workspace
 from logic.constants import WorkspaceFolders
 from logic.controller.project import ProjectController
+from logic.schema.file import FileUploadRequest
+from logic.db.init_db import sqldb
 
 
 class FileController:
@@ -23,25 +25,26 @@ class FileController:
             return False
 
     @staticmethod
-    def add_files(source_file_paths: list[str], project_id: UUID, session: Session):
+    def add_files(fur: FileUploadRequest, session: Session):
         added_files = []
 
-        for source_file_path in source_file_paths:
-            if not FileController.validate_csv_file(source_file_path):
+        for source_file in fur.file_paths:
+            if not FileController.validate_csv_file(source_file.file_path):
                 continue
 
-            file_copy_result = file_manager.copy_file(source_file_path, project_id)
+            file_copy_result = file_manager.copy_file(
+                source_file.file_path, fur.project_id
+            )
             if file_copy_result is None:
                 continue
 
             file_obj = FileStoreDB.add_file(
                 session=session,
                 file_path=str(file_copy_result),
-                file_name=file_copy_result.name,
+                file_name=source_file.file_name,
             )
-            added_files.append(FileStoreSchema(**file_obj.__dict__))
-
-        ProjectController.add_files(added_files, project_id)
+            added_files.append(FileStoreSchema.model_validate(file_obj))
+        ProjectController.add_files(added_files, fur.project_id, db_session=session)
 
     @staticmethod
     def delete_files(file_ids: list[UUID]):
