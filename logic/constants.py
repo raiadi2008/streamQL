@@ -4,8 +4,9 @@ from enum import Enum
 class WorkspaceFolders(Enum):
     USER_FILES = "user-files"
     LOGS = ".logs"
-    QUERYS = "query"
+    QUERIES = "queries"
     STORES = "stores"
+    PROJECTS = "projects"
 
 
 class FileTransferResults(Enum):

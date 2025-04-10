@@ -16,6 +16,9 @@ class ProjectStore(BaseModel):
     project_db_name: UUID
     files: list = Field(default_factory=list)
 
+    class Config:
+        orm_mode = True
+
 
 class CreateProjectRequest(BaseModel):
     project_name: str

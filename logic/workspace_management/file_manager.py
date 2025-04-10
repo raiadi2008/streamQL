@@ -20,10 +20,10 @@ class FileManager:
             destination_dir = workspace.get_path(WorkspaceFolders.USER_FILES)
             Path(destination_dir).mkdir(parents=True, exist_ok=True)
             shutil.copy(source_file_path, destination_dir)
-            return FileTransferResults.SUCCESS
+            return FileTransferResults.COPY_SUCCESS.value
         except Exception as e:
             print(f"Error copying file: {e}")
-            return FileTransferResults.FAILED
+            return FileTransferResults.COPY_FAILED.value
 
     @staticmethod
     def delete_file(file_id: str) -> bool:

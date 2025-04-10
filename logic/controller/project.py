@@ -67,7 +67,7 @@ class ProjectController:
             project_description=description,
         )
         EngineDB.create_db(
-            f"{db_uuid}.db", str(workspace.get_path(WorkspaceFolders.USER_FILES))
+            f"{db_uuid}.db", str(workspace.get_path(WorkspaceFolders.PROJECTS))
         )
         return project
 

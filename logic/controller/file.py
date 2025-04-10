@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 import csv
 import pandas as pd
+from sqlalchemy.orm import Session
 
 from logic.workspace_management.file_manager import file_manager
 from logic.db.ops.file_store import FileStoreDB
@@ -22,15 +23,14 @@ class FileController:
             return False
 
     @staticmethod
-    def add_files(source_file_paths: list[str], project_id: UUID):
-        session = workspace.get_db_session()
+    def add_files(source_file_paths: list[str], project_id: UUID, session: Session):
         added_files = []
 
         for source_file_path in source_file_paths:
             if not FileController.validate_csv_file(source_file_path):
                 continue
 
-            file_copy_result = file_manager.copy_file(source_file_path)
+            file_copy_result = file_manager.copy_file(source_file_path, project_id)
             if file_copy_result is None:
                 continue
 

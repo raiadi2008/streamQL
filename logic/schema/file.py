@@ -12,6 +12,9 @@ class FileStore(BaseModel):
     file_name: str
     projects: list = Field(default_factory=list)
 
+    class Config:
+        orm_mode = True
+
 
 class FileUploadRequest(BaseModel):
     """

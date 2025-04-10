@@ -10,3 +10,6 @@ class ProjectFileLink(BaseModel):
     id: UUID
     project_id: UUID
     file_id: UUID
+
+    class Config:
+        orm_mode = True
