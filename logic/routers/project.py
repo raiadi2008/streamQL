@@ -6,6 +6,7 @@ from logic.controller.project import ProjectController
 from logic.db.init_db import sqldb
 from logic.schema.project import (
     CreateProjectRequest,
+    ProjectSqlQuery,
     UpdateProjectRequest,
     FileOpsRequest,
 )
@@ -85,3 +86,10 @@ async def remove_files_from_project(
         return {"status": "success", "message": "Files removed from project"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/{project_id}/execute-sql-query")
+async def execute_sql_query(
+    project_id: UUID, query: ProjectSqlQuery, db: Session = Depends(sqldb.get_db)
+):
+    return ProjectController.execute_sql_query(project_id, query.sql_query, db)

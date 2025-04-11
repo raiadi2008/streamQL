@@ -32,3 +32,7 @@ class UpdateProjectRequest(BaseModel):
 
 class FileOpsRequest(BaseModel):
     files: list[FileStoreSchema]
+
+
+class ProjectSqlQuery(BaseModel):
+    sql_query: str
