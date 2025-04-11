@@ -182,27 +182,23 @@ class ProjectController:
     def execute_sql_query(
         project_id: UUID, sql_query: str, db_session: Session
     ) -> dict:
-        """
-        Execute a SQL query and return JSON with headers and rows.
-        """
         try:
             project = ProjectStoreDB.get_project(project_id, db_session)
             db_file = f"{project.project_db_name}.db"
             db_path = str(workspace.get_path(WorkspaceFolders.USER_FILES))
 
-            df = pd.DataFrame(
-                EngineDB.execute_query(
-                    sql_query=sql_query,
-                    db_name=db_file,
-                    workspace_path=db_path,
-                    fetch=True,
-                )
+            result = EngineDB.execute_query(
+                sql_query=sql_query,
+                db_name=db_file,
+                workspace_path=db_path,
+                fetch=True,
             )
 
+            # Do NOT convert result to DataFrame here!
             return {
                 "status": "success",
-                "columns": list(df.columns),
-                "rows": df.values.tolist(),
+                "columns": result["columns"],
+                "rows": result["rows"],
             }
 
         except Exception as e:

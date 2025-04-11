@@ -45,19 +45,15 @@ class EngineDB:
         workspace_path: str,
         params: Optional[Tuple[Any, ...]] = None,
         fetch: bool = True,
-    ) -> Optional[List[Tuple[Any, ...]]]:
+    ) -> dict:
         """
-        Executes a query on the given SQLite database.
-
-        Args:
-            sql_query (str): SQL query to execute.
-            db_name (str): Name of the SQLite database.
-            workspace_path (str): Path where the database is stored.
-            params (Tuple[Any, ...], optional): Parameters for parameterized query.
-            fetch (bool): If True, fetch results for SELECT queries.
+        Executes a query and returns column names + rows for SELECTs.
 
         Returns:
-            Optional[List[Tuple]]: Result of SELECT query, or None for others.
+            dict: {
+                "columns": List[str],
+                "rows": List[Tuple[Any, ...]]
+            }
         """
         db_path = Path(workspace_path) / db_name
         if not db_path.exists():
@@ -73,12 +69,12 @@ class EngineDB:
                 cursor.execute(sql_query)
 
             if fetch and sql_query.strip().lower().startswith("select"):
-                result = cursor.fetchall()
+                columns = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                return {"columns": columns, "rows": rows}
             else:
-                result = None
                 conn.commit()
+                return {"columns": [], "rows": []}
         finally:
             cursor.close()
             conn.close()
-
-        return result
