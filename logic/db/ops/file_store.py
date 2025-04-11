@@ -33,3 +33,7 @@ class FileStoreDB:
     @staticmethod
     def get_file(session: Session, file_id):
         return session.query(FileStore).filter_by(id=file_id).first()
+
+    @staticmethod
+    def get_all_files(session: Session):
+        return session.query(FileStore).all()

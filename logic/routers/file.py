@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from uuid import UUID
 
 from logic.controller.file import FileController
 from logic.schema.file import FileUpdateRequest, FileDeleteRequest, FileUploadRequest
@@ -12,6 +13,17 @@ router = APIRouter(tags=["Files"])
 @router.post("/upload")
 async def upload_file(fur: FileUploadRequest, db: Session = Depends(sqldb.get_db)):
     FileController.add_files(fur, db)
+
+
+@router.get("/")
+async def get_files(
+    file_ids: list[UUID] = [],
+    project_ids: list[UUID] = [],
+    db: Session = Depends(sqldb.get_db),
+):
+    return FileController.get_files(
+        file_ids=file_ids, project_ids=project_ids, session=db
+    )
 
 
 @router.delete("/")

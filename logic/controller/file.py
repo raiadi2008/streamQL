@@ -25,6 +25,39 @@ class FileController:
             return False
 
     @staticmethod
+    def get_files(
+        session: Session, file_ids: list[UUID] = None, project_ids: list[UUID] = None
+    ) -> list[FileStoreSchema]:
+        result_files = set()
+
+        if file_ids:
+            # Get specific files by ID
+            for file_id in file_ids:
+                file_obj = FileStoreDB.get_file(session, file_id)
+                if file_obj:
+                    result_files.add(file_obj)
+
+        elif project_ids:
+            # Get files linked to specific projects
+            for project_id in project_ids:
+                links = (
+                    session.query(ProjectFileLinkDB)
+                    .filter_by(project_id=project_id)
+                    .all()
+                )
+                for link in links:
+                    file_obj = FileStoreDB.get_file(session, link.file_id)
+                    if file_obj:
+                        result_files.add(file_obj)
+
+        else:
+            # Get all files
+            result_files = set(FileStoreDB.get_all_files(session))
+
+        # Convert to Pydantic schemas
+        return [FileStoreSchema.model_validate(file) for file in result_files]
+
+    @staticmethod
     def add_files(fur: FileUploadRequest, session: Session):
         added_files = []
 
