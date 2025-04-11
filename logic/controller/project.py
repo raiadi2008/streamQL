@@ -52,7 +52,7 @@ class ProjectController:
         project_name: str,
         db: Session,
         description: str = None,
-    ):
+    ) -> dict[str, any]:
         """
         Create a new project
         Args:

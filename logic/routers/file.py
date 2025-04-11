@@ -3,16 +3,22 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 
 from logic.controller.file import FileController
-from logic.schema.file import FileUpdateRequest, FileDeleteRequest, FileUploadRequest
+from logic.schema.file import (
+    FileUpdateRequest,
+    FileDeleteRequest,
+    MultiFileUploadRequest,
+)
 from logic.db.init_db import sqldb
 
 
 router = APIRouter(tags=["Files"])
 
 
-@router.post("/upload")
-async def upload_file(fur: FileUploadRequest, db: Session = Depends(sqldb.get_db)):
-    FileController.add_files(fur, db)
+@router.post("/upload/{project_id}")
+async def upload_file(
+    project_id: UUID, mfur: MultiFileUploadRequest, db: Session = Depends(sqldb.get_db)
+):
+    return FileController.add_files(mfur, project_id, db)
 
 
 @router.get("/")

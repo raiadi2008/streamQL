@@ -16,18 +16,21 @@ class FileStore(BaseModel):
         from_attributes = True
 
 
-class FilePathUploadRequest(BaseModel):
-    file_path: str
-    file_name: str
-
-
 class FileUploadRequest(BaseModel):
     """
     File upload request json schema
     """
 
-    file_paths: list[FilePathUploadRequest]
-    project_id: UUID
+    file_name: str
+    file_path: str
+
+
+class MultiFileUploadRequest(BaseModel):
+    """
+    Multiple file upload request json schema
+    """
+
+    files: list[FileUploadRequest] = Field(default_factory=list)
 
 
 class FileDeleteRequest(BaseModel):

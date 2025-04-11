@@ -7,7 +7,7 @@ from logic.workspace_management.file_manager import file_manager
 from logic.db.ops.file_store import FileStoreDB
 from logic.db.ops.project_store import ProjectStoreDB
 from logic.db.ops.project_file_link import ProjectFileLinkDB
-from logic.schema.file import FileStore as FileStoreSchema
+from logic.schema.file import FileStore as FileStoreSchema, MultiFileUploadRequest
 from logic.workspace_management.workspace import workspace
 from logic.constants import WorkspaceFolders
 from logic.controller.project import ProjectController
@@ -58,16 +58,15 @@ class FileController:
         return [FileStoreSchema.model_validate(file) for file in result_files]
 
     @staticmethod
-    def add_files(fur: FileUploadRequest, session: Session):
+    def add_files(mfur: MultiFileUploadRequest, project_id: UUID, session: Session):
         added_files = []
 
-        for source_file in fur.file_paths:
+        for source_file in mfur.files:
             if not FileController.validate_csv_file(source_file.file_path):
                 continue
 
-            file_copy_result = file_manager.copy_file(
-                source_file.file_path, fur.project_id
-            )
+            file_copy_result = file_manager.copy_file(source_file.file_path, project_id)
+
             if file_copy_result is None:
                 continue
 
@@ -77,7 +76,8 @@ class FileController:
                 file_name=source_file.file_name,
             )
             added_files.append(FileStoreSchema.model_validate(file_obj))
-        ProjectController.add_files(added_files, fur.project_id, db_session=session)
+        ProjectController.add_files(added_files, project_id, db_session=session)
+        return added_files
 
     @staticmethod
     def delete_files(file_ids: list[UUID]):
