@@ -7,6 +7,7 @@ from logic.db.ops.project_store import ProjectStoreDB
 from logic.db.ops.file_store import FileStoreDB
 from logic.db.ops.project_file_link import ProjectFileLinkDB
 from logic.models.db_models import ProjectStore
+from logic.schema.project import ProjectStore as ProjectStoreSchema
 from engine.db import EngineDB
 from logic.workspace_management.workspace import workspace
 from logic.constants import WorkspaceFolders
@@ -69,7 +70,7 @@ class ProjectController:
         EngineDB.create_db(
             f"{db_uuid}.db", str(workspace.get_path(WorkspaceFolders.PROJECTS))
         )
-        return project
+        return ProjectStoreSchema.model_validate(project).model_dump()
 
     @staticmethod
     def add_files(files: list[FileStoreSchema], project_id: UUID, db_session: Session):

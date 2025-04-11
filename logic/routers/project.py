@@ -26,15 +26,11 @@ async def get_projects(session=Depends(sqldb.get_db)):
 async def create_project(
     request: CreateProjectRequest, db_session: Session = Depends(sqldb.get_db)
 ):
-    try:
-        project = ProjectController.create(
-            project_name=request.project_name,
-            description=request.description,
-            db=db_session,
-        )
-        return {"status": "success", "project_id": project.id}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return ProjectController.create(
+        project_name=request.project_name,
+        description=request.description,
+        db=db_session,
+    )
 
 
 @router.get("/{project_id}")
