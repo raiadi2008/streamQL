@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
 
+
+from logic.schema.project_file_link import ProjectFileLink
 from logic.schema.file import FileStore as FileStoreSchema
 
 
@@ -14,7 +16,7 @@ class ProjectStore(BaseModel):
     project_name: str
     project_description: Optional[str] = Field(default=None)
     project_db_name: UUID
-    files: list = Field(default_factory=list)
+    files: list[ProjectFileLink] = Field(default_factory=list)
 
     class Config:
         from_attributes = True

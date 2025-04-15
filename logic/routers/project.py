@@ -52,15 +52,11 @@ async def delete_project(project_id: UUID, db_session: Session = Depends(sqldb.g
 async def update_project(
     project_id: UUID, request: UpdateProjectRequest, db: Session = Depends(sqldb.get_db)
 ):
-    try:
-        ProjectController.update(
-            project_id=project_id,
-            db_session=db,
-            description=request.description,
-        )
-        return {"status": "success", "message": "Project updated"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return ProjectController.update(
+        project_id=project_id,
+        db_session=db,
+        description=request.description,
+    )
 
 
 # @router.post("/{project_id}/add-files")

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 from uuid import UUID
 
+from logic.schema.project_file_link import ProjectFileLink
+
 
 class FileStore(BaseModel):
     """
@@ -10,7 +12,7 @@ class FileStore(BaseModel):
     id: UUID
     file_path: str
     file_name: str
-    projects: list = Field(default_factory=list)
+    projects: list[ProjectFileLink] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
@@ -47,4 +49,3 @@ class FileUpdateRequest(BaseModel):
     """
 
     file_path: str
-    file_id: UUID

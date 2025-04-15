@@ -28,14 +28,14 @@ class FileController:
     def get_files(
         session: Session, file_ids: list[UUID] = None, project_ids: list[UUID] = None
     ) -> list[FileStoreSchema]:
-        result_files = set()
+        result_files = list()
 
         if file_ids:
             # Get specific files by ID
             for file_id in file_ids:
                 file_obj = FileStoreDB.get_file(session, file_id)
                 if file_obj:
-                    result_files.add(file_obj)
+                    result_files.append(file_obj)
 
         elif project_ids:
             # Get files linked to specific projects
@@ -48,14 +48,16 @@ class FileController:
                 for link in links:
                     file_obj = FileStoreDB.get_file(session, link.file_id)
                     if file_obj:
-                        result_files.add(file_obj)
+                        result_files.append(file_obj)
 
         else:
             # Get all files
-            result_files = set(FileStoreDB.get_all_files(session))
+            result_files = list(FileStoreDB.get_all_files(session))
 
         # Convert to Pydantic schemas
-        return [FileStoreSchema.model_validate(file) for file in result_files]
+        return [
+            FileStoreSchema.model_validate(file).model_dump() for file in result_files
+        ]
 
     @staticmethod
     def add_files(mfur: MultiFileUploadRequest, project_id: UUID, session: Session):
@@ -92,10 +94,7 @@ class FileController:
             FileStoreDB.delete_file(session=session, file_id=file_id)
 
     @staticmethod
-    def update_files(source_file_path: str, file_id: UUID):
-        session = workspace.get_db_session()
-
-        # Get file and its links
+    def update_files(source_file_path: str, file_id: UUID, session: Session = None):
         file_obj = FileStoreDB.get_file(session, file_id)
         links = session.query(ProjectFileLinkDB).filter_by(file_id=file_id).all()
 

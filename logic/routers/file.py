@@ -43,14 +43,8 @@ async def delete_files(request: FileDeleteRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/update")
-async def update_file(request: FileUpdateRequest):
-    try:
-        FileController.update_files(request.file_path, request.file_id)
-        return {"status": "success", "message": "File updated in all linked projects"}
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except IOError as ioe:
-        raise HTTPException(status_code=500, detail=str(ioe))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@router.put("/update/{file_id}")
+async def update_file(
+    file_id: UUID, request: FileUpdateRequest, db: Session = Depends(sqldb.get_db)
+):
+    return FileController.update_files(request.file_path, file_id, db)

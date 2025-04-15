@@ -120,7 +120,7 @@ class ProjectController:
             db_session: Session of the database
             description (Optional): Description of the project
         """
-        project = ProjectStoreDB.get_project(db_session, project_id)
+        project = ProjectStoreDB.get_project(project_id, db_session)
         if description:
             project = ProjectStoreDB.update_project(
                 db_session, project_id, project_description=description
@@ -153,7 +153,8 @@ class ProjectController:
         Returns:
             List of all ProjectStore instances
         """
-        return ProjectStoreDB.get_projects(db)
+        projects = ProjectStoreDB.get_projects(db)
+        return [ProjectStoreSchema.model_validate(p).model_dump() for p in projects]
 
     @staticmethod
     def get(project_id: UUID, db: Session):
@@ -166,7 +167,8 @@ class ProjectController:
         Returns:
             A single ProjectStore instance or None
         """
-        return ProjectStoreDB.get_project(project_id, db)
+        project = ProjectStoreDB.get_project(project_id, db)
+        return ProjectStoreSchema.model_validate(project).model_dump()
 
     @staticmethod
     def execute_sql_query(
@@ -183,8 +185,6 @@ class ProjectController:
                 workspace_path=db_path,
                 fetch=True,
             )
-
-            # Do NOT convert result to DataFrame here!
             return {
                 "status": "success",
                 "columns": result["columns"],
