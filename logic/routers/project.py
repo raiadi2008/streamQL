@@ -54,7 +54,6 @@ async def update_project(
 ):
     try:
         ProjectController.update(
-            files=request.files,
             project_id=project_id,
             db_session=db,
             description=request.description,
@@ -64,17 +63,17 @@ async def update_project(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/{project_id}/add-files")
-async def add_files_to_project(
-    project_id: UUID,
-    request: FileOpsRequest,
-    db_session: Session = Depends(sqldb.get_db),
-):
-    try:
-        ProjectController.add_files(request.files, project_id, db_session)
-        return {"status": "success", "message": "Files added to project"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @router.post("/{project_id}/add-files")
+# async def add_files_to_project(
+#     project_id: UUID,
+#     request: FileOpsRequest,
+#     db_session: Session = Depends(sqldb.get_db),
+# ):
+#     try:
+#         ProjectController.add_files(request.files, project_id, db_session)
+#         return {"status": "success", "message": "Files added to project"}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/{project_id}/remove-files")

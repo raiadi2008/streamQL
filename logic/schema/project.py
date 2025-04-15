@@ -26,7 +26,6 @@ class CreateProjectRequest(BaseModel):
 
 
 class UpdateProjectRequest(BaseModel):
-    files: Optional[list[FileStoreSchema]] = Field(default_factory=list)
     description: Optional[str] = None
 
 

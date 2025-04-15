@@ -109,7 +109,6 @@ class ProjectController:
 
     @staticmethod
     def update(
-        files: list[FileStoreSchema],
         project_id: UUID,
         db_session: Session,
         description: str = None,
@@ -117,25 +116,16 @@ class ProjectController:
         """
         Update a project
         Args:
-            files: list of files that can be added to the project while updating it
             project_id: UUID of the project in which the files will be added
             db_session: Session of the database
             description (Optional): Description of the project
         """
         project = ProjectStoreDB.get_project(db_session, project_id)
-
-        if files:
-            for file in files:
-                ProjectController.delete_table(file.file_name, project.project_db_name)
-                df = pd.read_csv(file.file_path)
-                ProjectController.create_table(
-                    project.project_db_name, file.file_name, df
-                )
-
         if description:
-            ProjectStoreDB.update_project(
+            project = ProjectStoreDB.update_project(
                 db_session, project_id, project_description=description
             )
+        return ProjectStoreSchema.model_validate(project).model_dump()
 
     @staticmethod
     def delete(project_id: UUID, db_session: Session):
