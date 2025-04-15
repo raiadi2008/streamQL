@@ -16,7 +16,7 @@ class ProjectStore(BaseModel):
     project_name: str
     project_description: Optional[str] = Field(default=None)
     project_db_name: UUID
-    files: list[ProjectFileLink] = Field(default_factory=list)
+    files: Optional[list[ProjectFileLink]] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
