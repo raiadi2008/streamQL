@@ -101,7 +101,7 @@ class ProjectController:
             project_id: Id of the project from which files are to be deleted
             db_session: DB Session
         """
-        project = ProjectStoreDB.get_project(db_session, project_id)
+        project = ProjectStoreDB.get_project(project_id, db_session)
 
         for file in files:
             ProjectController.delete_table(file.file_name, project.project_db_name)
@@ -135,7 +135,7 @@ class ProjectController:
             project_id: ID of the project to be deleted
             db_session: Session of the database
         """
-        project = ProjectStoreDB.get_project(db_session, project_id)
+        project = ProjectStoreDB.get_project(project_id, db_session)
 
         EngineDB.delete_db(
             f"{project.project_db_name}.db",
