@@ -8,7 +8,7 @@ from logic.constants import WorkspaceFolders, FileTransferResults
 
 class FileManager:
     @staticmethod
-    def copy_file(source_file_path: str, project_id) -> str | None:
+    def copy_file(source_file_path: str, project_id=None) -> str | None:
         """
         Copy a file to the StreamQL workspace.
 
