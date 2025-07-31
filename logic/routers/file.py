@@ -33,9 +33,9 @@ async def get_files(
 
 
 @router.delete("/")
-async def delete_files(request: FileDeleteRequest):
+async def delete_files(request: FileDeleteRequest, db: Session = Depends(sqldb.get_db)):
     try:
-        FileController.delete_files(request.file_ids)
+        FileController.delete_files(request.file_ids, db)
         return {"status": "success", "message": "Files deleted"}
     except Warning as w:
         raise HTTPException(status_code=400, detail=str(w))
