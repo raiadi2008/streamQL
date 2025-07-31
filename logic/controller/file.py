@@ -82,8 +82,7 @@ class FileController:
         return added_files
 
     @staticmethod
-    def delete_files(file_ids: list[UUID]):
-        session = workspace.get_db_session()
+    def delete_files(file_ids: list[UUID], session: Session):
         for file_id in file_ids:
             # Check if file is linked to any project
             file_links = (
@@ -94,7 +93,7 @@ class FileController:
             FileStoreDB.delete_file(session=session, file_id=file_id)
 
     @staticmethod
-    def update_files(source_file_path: str, file_id: UUID, session: Session = None):
+    def update_files(source_file_path: str, file_id: UUID, session: Session):
         file_obj = FileStoreDB.get_file(session, file_id)
         links = session.query(ProjectFileLinkDB).filter_by(file_id=file_id).all()
 

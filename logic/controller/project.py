@@ -26,7 +26,7 @@ class ProjectController:
         EngineDB.execute_query(
             sql_query=f"DROP TABLE IF EXISTS '{table_name}'",
             db_name=db_file,
-            workspace_path=str(workspace.get_path(WorkspaceFolders.USER_FILES)),
+            workspace_path=str(workspace.get_path(WorkspaceFolders.PROJECTS)),
             fetch=False,
         )
 
@@ -40,9 +40,8 @@ class ProjectController:
             table_data: Data to be inseted in the newly created table
         """
         db_file = f"{db_id}.db"
-        db_path = workspace.get_path(WorkspaceFolders.USER_FILES) / db_file
         conn = EngineDB.create_db(
-            db_file, str(workspace.get_path(WorkspaceFolders.USER_FILES))
+            db_file, str(workspace.get_path(WorkspaceFolders.PROJECTS))
         )
         table_data.to_sql(table_name, conn, index=False, if_exists="replace")
         conn.close()
@@ -83,7 +82,6 @@ class ProjectController:
         """
         project = ProjectStoreDB.get_project(project_id, db_session)
         db_file = f"{project.project_db_name}.db"
-        db_path = str(workspace.get_path(WorkspaceFolders.USER_FILES))
 
         for file in files:
             df = pd.read_csv(file.file_path)
@@ -139,7 +137,7 @@ class ProjectController:
 
         EngineDB.delete_db(
             f"{project.project_db_name}.db",
-            str(workspace.get_path(WorkspaceFolders.USER_FILES)),
+            str(workspace.get_path(WorkspaceFolders.PROJECTS)),
         )
         ProjectStoreDB.delete_project(db_session, project_id)
 
@@ -177,7 +175,7 @@ class ProjectController:
         try:
             project = ProjectStoreDB.get_project(project_id, db_session)
             db_file = f"{project.project_db_name}.db"
-            db_path = str(workspace.get_path(WorkspaceFolders.USER_FILES))
+            db_path = str(workspace.get_path(WorkspaceFolders.PROJECTS))
 
             result = EngineDB.execute_query(
                 sql_query=sql_query,

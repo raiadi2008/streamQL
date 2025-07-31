@@ -1,5 +1,4 @@
 import shutil
-import os
 from pathlib import Path
 
 from logic.workspace_management.workspace import workspace
@@ -65,10 +64,14 @@ class FileManager:
             FileTransferResults indicating success or failure.
         """
         try:
-            df = pd.read_csv(file_path, nrows=5)
-            return not df.empty and len(df.columns) > 0
-        except Exception:
-            return False
+            destination_dir = workspace.get_path(WorkspaceFolders.USER_FILES)
+            Path(destination_dir).mkdir(parents=True, exist_ok=True)
+            destination_path = Path(destination_dir) / file_id
+            shutil.copy(new_file_path, destination_path)
+            return FileTransferResults.COPY_SUCCESS
+        except Exception as e:
+            print(f"Error updating file: {e}")
+            return FileTransferResults.COPY_FAILED
 
     @staticmethod
     def get_file(file_id: str) -> Path | None:
